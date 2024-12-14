@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
@@ -9,9 +9,21 @@ import DetailPage from "./pages/DetailPage";
 import Contex from "./contex/Contex";
 
 function App() {
+  const [articleList, setArticleList] = useState([]);
+
+  function fetchAllArticle() {
+    fetch("http://localhost:3000/post")
+      .then((res) => res.json())
+      .then((data) => setArticleList(data.posts));
+  }
+
+  useEffect(() => {
+    fetchAllArticle();
+  }, []);
+
   return (
     <>
-      <Contex>
+      <Contex.Provider value={articleList}>
         <BrowserRouter>
           <Routes>
             <Route Component={DefaultLayout}>
@@ -25,7 +37,7 @@ function App() {
             </Route>
           </Routes>
         </BrowserRouter>
-      </Contex>
+      </Contex.Provider>
     </>
   );
 }
